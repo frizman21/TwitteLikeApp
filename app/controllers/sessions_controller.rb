@@ -11,8 +11,11 @@ class SessionsController < ApplicationController
       log_in user
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
       
-      redirect_to user # shortcut
-      #redirect_to user_url(user) # explicit version
+      # redirect_to user # shortcut
+      # #redirect_to user_url(user) # explicit version
+
+      # improved redirect method - redirects to the invalid page is they bounced to the login
+      redirect_back_or user
 
     else
       flash.now[:danger] = 'Invalid email/password combination' 
