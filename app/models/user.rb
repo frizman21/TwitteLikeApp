@@ -102,8 +102,21 @@ class User < ApplicationRecord
     # Defines a proto-feed.
     # See "Following users" for the full implementation.
     def feed
-      # Micropost.where("user_id = ?", id)
-      microposts
+      # Placeholder - not real but populates the UI.
+      # microposts 
+
+      # Works, but not great in large sets.
+      # Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
+
+      # Works, but the IDs are interpolated, not escaped.
+      # Micropost.where("user_id IN (:following_ids) OR user_id = :user_id",
+      #               following_ids: following_ids, user_id: id)
+
+      # Final Implementation
+      following_ids = "SELECT followed_id FROM relationships
+                     WHERE  follower_id = :user_id"
+      Micropost.where("user_id IN (#{following_ids})
+                     OR user_id = :user_id", user_id: id)
     end
 
     # Follows a user.
